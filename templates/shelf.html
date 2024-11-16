@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ url_for('static', filename='logo.png') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='logo.png') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Charles News</title>
+</head>
+
+<body>
+    <div class="top-section" style="display: flex; justify-content: space-between; align-items: center;">
+        <h2 style="font-size: 24px; color: #F0ECE5; margin-left: 5px;">Charles News</h2>
+        <a href="#" class="menu-button" onclick="toggleMenu()" style="margin-right: 10px; vertical-align: middle; text-decoration: none !important;"
+           onmouseover="this.style.borderBottom = '1px solid #90EE26';"
+           onmouseout="this.style.borderBottom = 'none';">
+            <img src="{{ url_for('static', filename='options.png') }}" alt="Icon" style="height: 24px; width: 24px;">
+        </a>
+    </div>
+
+    <div class="menu-container" onclick="event.stopPropagation()">
+        <div class="menu-content">
+            <a href="/">View live</a><br>
+            <button class="close-button" onclick="closeMenu()">
+                <img src="{{ url_for('static', filename='close.png') }}" alt="Close" style="height: 24px; width: 24px;">
+            </button>
+        </div>
+    </div>
+
+    <table>
+        <tbody id="entry-list">
+            {% for entry in entries %}
+            <tr>
+                <td><a href="{{ entry['link'] }}" target="_blank">{{ entry['title'] }}</a></td>
+                <td>
+                    <form class="action-form" data-entry-id="{{ entry['entry_id'] }}" method="post">
+                        <img src="{{ url_for('static', filename='archive.png') }}" alt="Archive" class="archive-img" loading="lazy"
+                             onclick="deleteEntry(this)">
+                    </form>
+                </td>
+            </tr>
+            <tr class="summary-row">
+                <td colspan="2">
+                    <div class="content-box">
+                        <div class="combined-text">
+                            {% if 'summary' in entry %}
+                                {{ entry['summary'] }} {% if 'source' in entry %} <a href="{{ entry['source'] }}" target="_blank">(source)</a>{% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <form id="entry-form" style="margin-top: 20px;">
+        <label for="entry">New Entry:</label>
+        <input type="text" id="entry" name="entry" placeholder="Enter your new digest entry here" required>
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        document.getElementById('entry-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            let entry = document.getElementById('entry').value;
+
+            fetch('/add_entry', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({ entry: entry })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    alert('Entry added successfully!');
+                    document.getElementById('entry').value = ''; // Clear the input field
+                    reloadEntries(); // Reload the entries
+                } else {
+                    alert('Failed to add entry.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+
+        function reloadEntries() {
+            fetch('/get_entries')  // Assuming this endpoint returns the updated entries
+            .then(response => response.json())
+            .then(data => {
+                let entryList = document.getElementById('entry-list');
+                entryList.innerHTML = ''; // Clear current entries
+
+                data.entries.forEach(entry => {
+                    let row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><a href="${entry.link}" target="_blank">${entry.title}</a></td>
+                        <td>
+                            <form class="action-form" data-entry-id="${entry.entry_id}" method="post">
+                                <img src="{{ url_for('static', filename='archive.png') }}" alt="Archive" class="archive-img" loading="lazy"
+                                     onclick="deleteEntry(this)">
+                            </form>
+                        </td>
+                    `;
+                    entryList.appendChild(row);
+
+                    let summaryRow = document.createElement('tr');
+                    summaryRow.classList.add('summary-row');
+                    summaryRow.innerHTML = `
+                        <td colspan="2">
+                            <div class="content-box">
+                                <div class="combined-text">
+                                    ${entry.summary ? entry.summary : ''} ${entry.source ? `<a href="${entry.source}" target="_blank">(source)</a>` : ''}
+                                </div>
+                            </div>
+                        </td>
+                    `;
+                    entryList.appendChild(summaryRow);
+                });
+            })
+            .catch(error => console.error('Error fetching entries:', error));
+        }
+    </script>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

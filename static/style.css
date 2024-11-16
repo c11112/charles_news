@@ -1,0 +1,138 @@
+body {
+  font-family: 'Open Sans', Arial, sans-serif;
+  background-color: #18181b;
+  margin: 0;
+  padding: 0;
+  color: #F0ECE5;
+  font-size: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding-right: 10px;
+}
+
+.top-section {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #000000;
+  padding: 0;
+  margin: 0;
+  z-index: 1000;
+  border-bottom: 1px solid #F0ECE5;
+}
+
+.menu-container {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 100%;
+  height: 100%;
+  background-color: #000000;
+  z-index: 1001;
+  transition: right 0.3s ease;
+  overflow-y: auto;
+}
+
+.menu-container.open {
+  overflow-x: hidden;
+  line-height: 1.5;
+}
+
+.menu-content {
+  padding: 20px;
+  position: relative;
+}
+
+.menu-button {
+  cursor: pointer;
+}
+
+.close-button {
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: #F0ECE5;
+  padding: 0;
+  font-size: 16px;
+}
+
+.top-section h2 {
+  margin-left: 5px;
+  padding-left: 5px;
+}
+
+.table-container {
+  padding-right: 10px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 80px;
+  padding-right: 20px;
+}
+
+th,
+td {
+  border: none;
+  padding: 4px;
+  padding-left: 10px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+a {
+  text-decoration: none;
+  color: #F0ECE5;
+}
+
+a:hover {
+  border-bottom: 1px solid #90EE26;
+}
+
+.delete-form {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.archive-img,
+.update-img {
+  max-width: 20px;
+  height: auto;
+  margin-right: 2px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  transform: scale(1);
+}
+
+.action-form {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.top-section a:hover {
+  border-bottom: 1px solid #90EE26;
+}
+
+.summary {
+  padding: 8px;
+  border: 1px solid #F0ECE5;
+  border-radius: 10px;
+  white-space: pre-line; 
+  background: linear-gradient(135deg, #000000, #000000);
+}
+
+.summary-container {
+  margin: 0; /* If applicable, reset margins on parent containers */
+  padding: 0; /* Reset padding if necessary */
+}
+
+.summary-row {
+  display: none;
+}

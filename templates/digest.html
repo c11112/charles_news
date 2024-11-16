@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ url_for('static', filename='logo.png') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='logo.png') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Charles News</title>
+</head>
+
+<body>
+
+  <div class="top-section" style="display: flex; justify-content: space-between; align-items: center;">
+      <h2 style="font-size: 24px; color: #F0ECE5; margin-left: 5px;">Charles News</h2>
+      <a href="#" class="menu-button" onclick="toggleMenu()" style="margin-right: 10px; vertical-align: middle; text-decoration: none !important;"
+          onmouseover="this.style.borderBottom = '1px solid #90EE26';"
+          onmouseout="this.style.borderBottom = 'none';">
+          <img src="{{ url_for('static', filename='options.png') }}" alt="Icon" style="height: 24px; width: 24px;">
+      </a>
+  </div>
+
+  <div class="menu-container" onclick="event.stopPropagation()">
+      <div class="menu-content">
+          <a href="/shelf">View shelf</a><br>
+          <a href="#" onclick="clearAllEntries()">Clear all entries</a><br>
+          <button class="close-button" onclick="closeMenu()">
+              <img src="{{ url_for('static', filename='close.png') }}" alt="Close" style="height: 24px; width: 24px;">
+          </button>
+      </div>
+  </div>
+
+    {% if entries %}
+        <table>
+            <tbody>
+                {% for entry in entries %}
+                <tr>
+                    <td>
+                        <a href="#" onclick="toggleSummary(this); return false;">{{ entry['title'] }}</a>
+                    </td>
+                </tr>
+                <tr class="summary-row">
+                    <td colspan="2">
+                        <div class="content-box">
+                            <div class="summary">
+                                {% if 'summary' in entry %}
+                                    {% if 'source' in entry %}
+                                        <a href="{{ entry['link'] }}" target="_blank">{{ entry['summary'] }}</a>
+                                    {% endif %}
+                                    <form class="action-form" data-entry-id="{{ entry['entry_id'] }}" method="post"
+                                          action="{{ url_for('update_data', entry_id=entry['entry_id']) }}">
+                                        <a href="#" onclick="updateEntry('{{ entry['entry_id'] }}', this)">Save</a> |
+                                        <a href="#" onclick="deleteEntry(this)">Archive</a> |
+                                        <a href="{{ entry['source'] }}" target="_blank">Source</a>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+
+  <form id="deleteAllEntriesForm" method="POST" action="{{ url_for('delete_all_entries') }}">
+      <button type="submit" style="display: none;">Delete All Entries</button>
+  </form>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

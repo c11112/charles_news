@@ -1,6 +1,7 @@
 from flask import Flask, render_template, jsonify, request
 import requests
 import uuid
+import pandas
 
 app = Flask(__name__, static_url_path='/static')
 
